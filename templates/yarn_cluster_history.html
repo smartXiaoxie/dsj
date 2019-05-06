@@ -1,0 +1,551 @@
+{% extends "base.html" %}
+{% block con %}
+    <div class="breadcrumb">
+        <!-- total_cpu的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary total_cpu" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary total_cpu" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary total_cpu" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary total_cpu" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right total_cpu_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right total_cpu_search" style="display: inline-block; width: 300px;">
+        </div>
+        <div id="total_cpu" style="width: 100%;height:450px;"></div>
+    </div>
+
+    <div class="breadcrumb">
+        <!-- total_mem的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary total_mem" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary total_mem" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary total_mem" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary total_mem" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right total_mem_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right total_mem_search" style="display: inline-block; width: 300px;">
+        </div>
+        <div id="total_mem" style="width: 100%;height:450px;"></div>
+    </div>
+
+    <div class="breadcrumb">
+        <!-- used_cpu的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary used_cpu" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary used_cpu" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary used_cpu" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary used_cpu" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right used_cpu_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right used_cpu_search" style="display: inline-block; width: 300px;">
+        </div>
+        <div id="used_cpu" style="width: 100%;height:450px;"></div>
+    </div>
+
+    <div class="breadcrumb">
+        <!-- used_mem的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary used_mem" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary used_mem" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary used_mem" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary used_mem" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right used_mem_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right used_mem_search" style="display: inline-block; width: 300px;">
+        </div>
+        <div id="used_mem" style="width: 100%;height:450px;"></div>
+    </div>
+
+    <div class="breadcrumb">
+        <!-- appsRuning的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary apps_runing" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary apps_runing" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary apps_runing" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary apps_runing" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right apps_runing_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right apps_runing_search" style="display: inline-block; width: 300px;">
+        </div>
+        <div id="apps_runing" style="width: 100%;height:450px;"></div>
+    </div>
+
+    <div class="breadcrumb">
+        <!-- appsPending的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary apps_pending" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary apps_pending" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary apps_pending" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary apps_pending" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right apps_pending_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right apps_pending_search" style="display: inline-block; width: 300px;">
+        </div>
+        <div id="apps_pending" style="width: 100%;height:450px;"></div>
+    </div>
+{% endblock %}
+
+<!--引入echarts的js-->
+{% block js %}
+    <script src="/static/js/highcharts.js"></script>
+    <p style="display:none" id=cluster_id>{{ cluster_id }}</p>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // ***** 柱形图-total_cpu *****
+        function TotalCpuData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var data;
+            var chart = null;
+            var id = args || 1;
+            var cluster_id = $('#cluster_id').text();
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/yarn_cluster_history?id=" + id + "&" + "cluster_id=" + cluster_id + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        data = result.total_cpu_data;
+                        chart = Highcharts.chart('total_cpu', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: 'total_cpu变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '单位 (个)'
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: 'total_cpu: <b>{point.y:.1f} 个</b>'
+                            },
+                            series: [{
+                                name: 'total_cpu',
+                                data: data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        TotalCpuData();
+
+        $('.total_cpu').click(function () {
+            var id = $(this).attr('id');
+            TotalCpuData(id);
+        });
+
+        // 输入框
+        $('.total_cpu_sub').click(function () {
+            var date_time = $('.total_cpu_search').val();
+            $('.total_cpu_search').val("");
+            TotalCpuData(0, date_time);
+        });
+        // ***** 柱形图-total_mem *****
+        function TotalMemData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var chart = null;
+            var data;
+            var id = args || 1;
+            var cluster_id = $('#cluster_id').text();
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/yarn_cluster_history?id=" + id + "&" + "cluster_id=" + cluster_id + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        data = result.total_mem_data;
+                        chart = Highcharts.chart('total_mem', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: 'total_mem变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '单位 (kB)'
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: 'total_mem: <b>{point.y:.1f} kB</b>'
+                            },
+                            series: [{
+                                name: 'total_mem',
+                                data: data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        TotalMemData();
+
+        $('.total_mem').click(function () {
+            var id = $(this).attr('id');
+            TotalMemData(id);
+        });
+
+        // 输入框
+        $('.total_mem_sub').click(function () {
+            var date_time = $('.total_mem_search').val();
+            $('.total_mem_search').val("");
+            TotalMemData(0, date_time);
+        });
+
+        // ***** 柱形图-used_cpu *****
+        function UsedCpuData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var chart = null;
+            var data;
+            var id = args || 1;
+            var cluster_id = $('#cluster_id').text();
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/yarn_cluster_history?id=" + id + "&" + "cluster_id=" + cluster_id + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        data = result.used_cpu_data;
+                        chart = Highcharts.chart('used_cpu', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: 'used_cpu变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '单位 (个)'
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: 'used_cpu: <b>{point.y:.1f} 个</b>'
+                            },
+                            series: [{
+                                name: 'used_cpu',
+                                data: data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        UsedCpuData();
+
+        $('.used_cpu').click(function () {
+            var id = $(this).attr('id');
+            UsedCpuData(id);
+        });
+
+        // 输入框
+        $('.used_cpu_sub').click(function () {
+            var date_time = $('.used_cpu_search').val();
+            $('.used_cpu_search').val("");
+            UsedCpuData(0, date_time);
+        });
+
+        // ***** 柱形图-used_mem *****
+        function UsedMemData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var chart = null;
+            var data;
+            var id = args || 1;
+            var cluster_id = $('#cluster_id').text();
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/yarn_cluster_history?id=" + id + "&" + "cluster_id=" + cluster_id + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        data = result.used_mem_data;
+                        chart = Highcharts.chart('used_mem', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: 'used_mem变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '单位 (kB)'
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: 'used_mem: <b>{point.y:.1f} 个</b>'
+                            },
+                            series: [{
+                                name: 'used_mem',
+                                data: data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        UsedMemData();
+
+        $('.used_mem').click(function () {
+            var id = $(this).attr('id');
+            UsedMemData(id);
+        });
+
+        // 输入框
+        $('.used_mem_sub').click(function () {
+            var date_time = $('.used_mem_search').val();
+            $('.used_mem_search').val("");
+            UsedMemData(0, date_time);
+        });
+
+        // ***** 柱形图-appsRuning *****
+        function AppsRuningData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var chart = null;
+            var data;
+            var id = args || 1;
+            var cluster_id = $('#cluster_id').text();
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/yarn_cluster_history?id=" + id + "&" + "cluster_id=" + cluster_id + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        data = result.apps_runing_data;
+                        chart = Highcharts.chart('apps_runing', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: 'appsRuning变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '状态 '
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: 'appsRuning: <b>{point.y:.1f} </b>'
+                            },
+                            series: [{
+                                name: 'appsRuning',
+                                data: data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        AppsRuningData();
+
+        $('.apps_runing').click(function () {
+            var id = $(this).attr('id');
+            AppsRuningData(id);
+        });
+
+        // 输入框
+        $('.apps_runing_sub').click(function () {
+            var date_time = $('.apps_runing_search').val();
+            $('.apps_runing_search').val("");
+            AppsRuningData(0, date_time);
+        });
+
+        // ***** 柱形图-appsPending *****
+        function AppsPendingData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var chart = null;
+            var data;
+            var id = args || 1;
+            var cluster_id = $('#cluster_id').text();
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/yarn_cluster_history?id=" + id + "&" + "cluster_id=" + cluster_id + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        data = result.apps_pending_data;
+                        chart = Highcharts.chart('apps_pending', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: 'appsPending变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '状态 '
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: 'appsPending: <b>{point.y:.1f} </b>'
+                            },
+                            series: [{
+                                name: 'appsPending',
+                                data: data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        AppsPendingData();
+
+        $('.apps_pending').click(function () {
+            var id = $(this).attr('id');
+            AppsPendingData(id);
+        });
+
+        // 输入框
+        $('.apps_pending_sub').click(function () {
+            var date_time = $('.apps_pending_search').val();
+            $('.apps_pending_search').val("");
+            AppsPendingData(0, date_time);
+        });
+    </script>
+{% endblock %}

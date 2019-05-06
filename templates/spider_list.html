@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block con %}
+    <div class="agile-grids">
+        <div class="agile-tables">
+            <form action="" method="get" class="pull-right">
+                <input type="text" name="pro" class="form-control" style="display: inline-block; width: 200px;">
+                <button class="btn btn-success" style="vertical-align: 0px;">go</button>
+            </form>
+            <div class="w3l-table-info">
+                <h2>项目检测详情</h2>
+                <table id="table">
+                    <thead>
+                    <tr>
+                        <th>项目名</th>
+                        <th>主机数</th>
+                        <th>uuid</th>
+                        <th>起始时间</th>
+                        <th>结束时间</th>
+                        <th>总请求数</th>
+                        <th>每分钟速率</th>
+                        <th>总数量</th>
+                        <th>统计</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for spider in spider_obj %}
+                        <tr>
+                            <td>{{ spider.spider_name }}</td>
+                            <td>{{ spider.operating }}</td>
+                            <td>{{ spider.uuid }}</td>
+                            <td>{{ spider.start_time }}</td>
+                            <td>{{ spider.finish_time }}</td>
+                            <td>{{ spider.request_stats.request_total }}</td>
+                            <td>{{ spider.rate_avg }}</td>
+                            <td>{{ spider.data_stats.total }}</td>
+                            <td><a href="/spider_data/{{ spider.id }}/">历史统计</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {{ pagination.page_html|safe }}
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}

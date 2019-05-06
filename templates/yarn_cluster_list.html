@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block con %}
+    <div class="agile-grids">
+        <div class="agile-tables">
+{#            <form action="" method="get" class="pull-right">#}
+{#                <input type="text" name="pro" class="form-control" style="display: inline-block; width: 200px;">#}
+{#                <button class="btn btn-success" style="vertical-align: 0px;">go</button>#}
+{#            </form>#}
+            <div class="w3l-table-info">
+                <h2>yarn 集群实时状态</h2>
+                <table id="table">
+                    <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>总cpu</th>
+                        <th>总内存</th>
+                        <th>已用cpu</th>
+                        <th>已用内存</th>
+                        <th>active_name</th>
+                        <th>total_live</th>
+                        <th>unhealthyNodes</th>
+                        <th>appsRuning</th>
+                        <th>appsPending</th>
+                        <th>统计</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for yarn_cluster in  yarn_cluster_obj %}
+                        <tr>
+                            <td>{{ yarn_cluster.t_time }}</td>
+                            <td>{{ yarn_cluster.total_cpu }}</td>
+                            <td>{{ yarn_cluster.total_mem }}</td>
+                            <td>{{ yarn_cluster.used_cpu }}</td>
+                            <td>{{ yarn_cluster.used_mem }}</td>
+                            <td>{{ yarn_cluster.active_name }}</td>
+                            <td>{{ yarn_cluster.total_live }}</td>
+                            <td>{{ yarn_cluster.unhealthyNodes }}</td>
+                            <td>{{ yarn_cluster.appsRuning }}</td>
+                            <td>{{ yarn_cluster.appsPending }}</td>
+                            <td><a href="/yarn_cluster_data/{{ yarn_cluster.cluster_id }}/">历史统计</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {{ pagination.page_html|safe }}
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}

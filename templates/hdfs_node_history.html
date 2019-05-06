@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block con %}
+    <div class="breadcrumb">
+        <!-- 总大小空间变化的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary node_total" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary node_total" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary node_total" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary node_total" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right node_total_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right node_total_search" style="display: inline-block; width: 300px;">
+        </div>
+        <div id="node_size_total" style="width: 100%;height:450px;"></div>
+    </div>
+    <div class="breadcrumb">
+        <!-- 使用空间变化的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary node_used" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary node_used" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary node_used" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary node_used" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right node_used_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right node_used_search" style="display: inline-block; width: 300px;">
+        </div>
+        <div id="node_size_used" style="width: 100%;height:450px;"></div>
+    </div>
+{% endblock %}
+
+<!--引入echarts的js-->
+{% block js %}
+    <script src="/static/js/highcharts.js"></script>
+    <p style="display:none" id=node_name>{{ node_name }}</p>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // ***** 柱形图-历史总大小(node_size_total) *****
+        var data;
+        var chart = null;
+
+        function requestData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var id = args || 1;
+            var node_name = $('#node_name').text();
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/hdfs_node_history?id=" + id + "&" + "node_name=" + node_name + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        data = result.node_size_total;
+                        chart = Highcharts.chart('node_size_total', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: '总大小空间变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '单位 (kB)'
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: '总大小: <b>{point.y:.1f} kB</b>'
+                            },
+                            series: [{
+                                name: '总大小',
+                                data: data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        requestData();
+
+        $('.node_total').click(function () {
+            var id = $(this).attr('id');
+            requestData(id);
+        });
+
+        // 输入框
+        $('.node_total_sub').click(function () {
+            var date_time = $('.node_total_search').val();
+            $('.node_total_search').val("");
+            requestData(0, date_time);
+        });
+
+        // ***** 柱形图-使用空间变化(hdfs_uesd) *****
+        var use_data;
+        var use_chart = null;
+
+        function use_requestData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var id = args || 1;
+            var node_name = $('#node_name').text();
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/hdfs_node_history?id=" + id + "&" + "node_name=" + node_name + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        use_data = result.node_size_used;
+                        use_chart = Highcharts.chart('node_size_used', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: '使用空间变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '单位 (kB)'
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: '使用空间: <b>{point.y:.1f} kB</b>'
+                            },
+                            series: [{
+                                name: '使用空间',
+                                data: use_data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        use_requestData();
+
+        $('.node_used').click(function () {
+            var id = $(this).attr('id');
+            use_requestData(id);
+        });
+
+        // 输入框
+        $('.node_used_sub').click(function () {
+            var date_time = $('.node_used_search').val();
+            $('.node_used_search').val("");
+            use_requestData(0, date_time);
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% block con %}
+    <div class="breadcrumb">
+        <!-- 总大小空间变化的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary total_space" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary total_space" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary total_space" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary total_space" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right total_space_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right total_space_search" style="display: inline-block; width: 300px;">
+        </div>
+
+        <div id="hdfs_total" style="width: 100%;height:450px;"></div>
+    </div>
+
+    <div class="breadcrumb">
+        <!-- 使用空间变化的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary use_space" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary use_space" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary use_space" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary use_space" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right use_space_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right use_space_search" style="display: inline-block; width: 300px;">
+        </div>
+        <div id="hdfs_used" style="width: 100%;height:450px;"></div>
+    </div>
+
+    <div class="breadcrumb">
+        <!-- 文件总数变化的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary total_files" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary total_files" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary total_files" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary total_files" id="4">最近一个月历史记录</p>
+            <!-- 搜索框 -->
+            <button class="btn btn-success pull-right total_files_sub" style="vertical-align: 0px;">go</button>
+            <input type="text" placeholder="年-月:年-月 例如:2018-03:2018-04" class="form-control pull-right total_files_search" style="display: inline-block; width: 300px;">
+        </div>
+        <div id="file_total" style="width: 100%;height:450px;"></div>
+    </div>
+{% endblock %}
+
+<!--引入echarts的js-->
+{% block js %}
+    <script src="/static/js/highcharts.js"></script>
+    <p style="display:none" id=cluster_id>{{ cluster_id }}</p>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // ***** 柱形图-总大小空间变化(hdfs_total) *****
+        var data;
+        var chart = null;
+
+        function requestData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var id = args || 1;
+            var cluster_id = $('#cluster_id').text();
+            {#var total_space_search = $("").value();#}
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/hdfs_cluster_history?id=" + id + "&" + "cluster_id=" + cluster_id + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        data = result.hdfs_total;
+                        chart = Highcharts.chart('hdfs_total', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: '总大小空间变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '单位 (kB)'
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: '总大小: <b>{point.y:.1f} kB</b>'
+                            },
+                            series: [{
+                                name: '总大小',
+                                data: data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        requestData();
+
+        $('.total_space').click(function () {
+            var id = $(this).attr('id');
+            requestData(id);
+        });
+
+        // 输入框
+        $('.total_space_sub').click(function () {
+            var date_time = $('.total_space_search').val();
+            $('.total_space_search').val("");
+            requestData(0, date_time);
+        });
+
+        // ***** 柱形图-使用空间变化(hdfs_uesd) *****
+        var use_data;
+        var use_chart = null;
+
+        function use_requestData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var id = args || 1;
+            var cluster_id = $('#cluster_id').text();
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/hdfs_cluster_history?id=" + id + "&" + "cluster_id=" + cluster_id + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        use_data = result.hdfs_used;
+                        use_chart = Highcharts.chart('hdfs_used', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: '使用空间变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '单位 (kB)'
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: '使用空间: <b>{point.y:.1f} kB</b>'
+                            },
+                            series: [{
+                                name: '使用空间',
+                                data: use_data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        use_requestData();
+
+        $('.use_space').click(function () {
+            var id = $(this).attr('id');
+            use_requestData(id);
+        });
+
+        // 输入框
+        $('.use_space_sub').click(function () {
+            var date_time = $('.use_space_search').val();
+            $('.use_space_search').val("");
+            use_requestData(0, date_time);
+        });
+
+        // ***** 柱形图-文件总数变化(file_total) *****
+        var file_data;
+        var file_chart = null;
+
+        function file_requestData(args, date_time) {
+            if (! date_time){
+                date_time = 0;
+            }
+            var id = args || 1;
+            var cluster_id = $('#cluster_id').text();
+            $.ajax({
+                type: "get",
+                url: "http://127.0.0.1:8000/hdfs_cluster_history?id=" + id + "&" + "cluster_id=" + cluster_id + "&" + "date_time=" + date_time,
+                success: function (result) {
+                    if (result) {
+                        file_data = result.file_total;
+                        file_chart = Highcharts.chart('file_total', {
+                            chart: {
+                                type: 'column',
+                            },
+                            title: {
+                                text: '文件总数变化'
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            xAxis: {
+                                type: 'category',
+                                labels: {
+                                    rotation: -45  // 设置轴标签旋转角度
+                                }
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: '单位 (个)'
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            tooltip: {
+                                pointFormat: '文件总数: <b>{point.y:.1f} 个</b>'
+                            },
+                            series: [{
+                                name: '文件总数',
+                                data: file_data,         // 图表数据
+                                dataLabels: {
+                                    enabled: true,
+                                    rotation: -90,
+                                    color: '#FFFFFF',
+                                    align: 'right',
+                                    format: '{point.y:.1f}', // :.1f 为保留 1 位小数
+                                    y: 10
+                                }
+                            }]
+                        });
+                    }
+                },
+            });
+        }
+
+        file_requestData();
+
+        $('.total_files').click(function () {
+            var id = $(this).attr('id');
+            file_requestData(id);
+        })
+
+        // 输入框
+        $('.total_files_sub').click(function () {
+            var date_time = $('.total_files_search').val();
+            $('.total_files_search').val("");
+            file_requestData(0, date_time);
+        });
+
+    </script>
+{% endblock %}

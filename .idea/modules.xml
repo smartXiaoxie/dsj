@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/dsj.iml" filepath="$PROJECT_DIR$/.idea/dsj.iml" />
+      <module fileurl="file://E:/dsj_streaming/.idea/dsj_streaming.iml" filepath="E:/dsj_streaming/.idea/dsj_streaming.iml" />
+      <module fileurl="file://E:/python_test/.idea/python_test.iml" filepath="E:/python_test/.idea/python_test.iml" />
+    </modules>
+  </component>
+</project>

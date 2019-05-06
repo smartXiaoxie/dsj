@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block con %}
+    <div class="breadcrumb">
+        <!-- 扇形图的DOM -->
+        <div id="request_stats" style="width: 1000px;height:450px;"></div>
+    </div>
+    <div class="breadcrumb">
+        <!-- 扇形图的DOM -->
+        <div id="data_stats" style="width: 600px;height:400px;"></div>
+    </div>
+    <div class="breadcrumb">
+        <!-- 折线图的DOM -->
+        <div class="box-header">
+            <!--用参数的形式转回去就可以，不用写四个路径-->
+            <p class="btn btn-primary" id="1">最近一周历史记录</p>
+            <p class="btn btn-primary" id="2">最近半个月历史记录</p>
+            <p class="btn btn-primary" id="3">最近三周历史记录</p>
+            <p class="btn btn-primary" id="4">最近一个月历史记录</p>
+        </div>
+        <div id="broken_line" style="width: 1000px;height:450px;"></div>
+    </div>
+    <p style="display:none" id=spider_name>{{ spider_name }}</p>
+{% endblock %}
+
+<!--引入echarts的js-->
+{% block js %}
+    <script src="/static/js/echarts.js"></script>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // ***** 扇形图-request_stats *****
+        // 基于准备好的dom，初始化echarts实例
+        var request_stats_obj = echarts.init(document.getElementById('request_stats'));
+
+        // 指定图表的配置项和数据
+        request_option = {
+            title: {
+                text: 'request_stats分析',
+                subtext: '',
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: {{ sector_legend_data|safe }}
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: '40%',
+                    center: ['50%', '70%'],
+                    data: {{ sector_series_data|safe }},
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        request_stats_obj.setOption(request_option);
+
+        // ***** 扇形图-data_stats *****
+        // 基于准备好的dom，初始化echarts实例
+        var data_stats_obj = echarts.init(document.getElementById('data_stats'));
+
+        // 指定图表的配置项和数据
+        data_option = {
+
+            title: {
+                text: 'data_stats分析',
+                subtext: '',
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: {{ legend_data|safe }}
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius : '55%',
+                    center: ['50%', '60%'],
+                    data: {{ series_data|safe }},
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        data_stats_obj.setOption(data_option);
+
+        // ***** 折线图 *****
+        var broken_line_obj = echarts.init(document.getElementById('broken_line'));
+
+        broken_line_option = {
+            xAxis: {
+                type: 'category',
+                data: []
+                {#data: {{ broken_x_data|safe }}#}
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                {#data: {{ broken_series_data }},#}
+                data: [],
+                type: 'line'
+            }]
+        };
+        var xAxis_data;
+        var series_data;
+        broken_line_obj.setOption(broken_line_option);
+
+        function hist_data(args) {
+            var id = args || 1;
+            var spider_name = $('#spider_name').text();
+            $.ajax({
+                type: "get",
+                async: true,   //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+                url: "http://127.0.0.1:8000/broken_data?id=" + id + "&" + "spider_name=" + spider_name,
+                success: function (result) {
+                    //请求成功时执行该函数内容，result即为服务器返回的json对象
+                    if (result) {
+                        xAxis_data = result[0];
+                        series_data = result[1];
+
+                        broken_line_obj.setOption({
+                            xAxis: {
+                                data: xAxis_data
+                            },
+                            series: [{
+                                data: series_data
+                            }]
+                        });
+                    }
+                },
+                error: function (errorMsg) {
+                    //请求失败时执行该函数
+                    alert("图表请求数据失败!");
+                    myChart.hideLoading();
+                }
+            })
+        }
+
+        hist_data();
+
+        $('.btn-primary').click(function () {
+            var id = $(this).attr('id');
+            hist_data(id);
+        })
+
+    </script>
+{% endblock %}

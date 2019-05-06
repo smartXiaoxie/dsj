@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block con %}
+    <div class="agile-grids">
+        <div class="agile-tables">
+{#            <form action="" method="get" class="pull-right">#}
+{#                <input type="text" name="pro" class="form-control" style="display: inline-block; width: 200px;">#}
+{#                <button class="btn btn-success" style="vertical-align: 0px;">go</button>#}
+{#            </form>#}
+            <div class="w3l-table-info">
+                <h2>hdfs 集群实时状态</h2>
+                <table id="table">
+                    <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>状态</th>
+                        <th>总大小</th>
+                        <th>使用空间</th>
+                        <th>剩余空间</th>
+                        <th>miss_block</th>
+                        <th>namenode</th>
+                        <th>文件总数</th>
+                        <th>统计</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for hdfs_cluster in hdfs_cluster_obj %}
+                        <tr>
+                            <td>{{ hdfs_cluster.t_time }}</td>
+                            <td>{{ hdfs_cluster.cluster_status }}</td>
+                            <td>{{ hdfs_cluster.hdfs_total }}</td>
+                            <td>{{ hdfs_cluster.hdfs_used }}</td>
+                            <td>{{ hdfs_cluster.hdfs_remaining }}</td>
+                            <td>{{ hdfs_cluster.miss_block }}</td>
+                            <td>{{ hdfs_cluster.active_name }}</td>
+                            <td>{{ hdfs_cluster.file_total }}</td>
+                            <td><a href="/hdfs_cluster_data/{{ hdfs_cluster.cluster_id }}/">历史统计</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {{ pagination.page_html|safe }}
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}
