@@ -4,6 +4,6 @@
 ### 使用 python 3.6 + <br/>
 ### 项目现在还很简陋，后续继续开发，集成全平台的监控，自动加监控项和负责人。<br/>
 =======<br/>
-展示图如下：<br/>
+简单展示如下展示图如下：<br/>
 
 ![Image](https://github.com/smartXiaoxie/smartXiaoxie.github.io/blob/master/img/scrapy_monitor_1.png)
