@@ -7,3 +7,5 @@
 简单展示如下展示图如下：<br/>
 
 ![Image](https://github.com/smartXiaoxie/smartXiaoxie.github.io/blob/master/img/scrapy_monitor_1.png)
+![Image](https://github.com/smartXiaoxie/smartXiaoxie.github.io/blob/master/img/scrapy_monitor_2.png)
+![Image](https://github.com/smartXiaoxie/smartXiaoxie.github.io/blob/master/img/scrapy_monitor_3.png)
