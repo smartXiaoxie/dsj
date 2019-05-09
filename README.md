@@ -6,4 +6,4 @@
 =======<br/>
 展示图如下：<br/>
 
-![Image](https://github.com/smartXiaoxie/smartXiaoxie.github.io/img/scrapy_monitor_1.png)
+![Image](https://github.com/smartXiaoxie/smartXiaoxie.github.io/blob/master/img/scrapy_monitor_1.png)
